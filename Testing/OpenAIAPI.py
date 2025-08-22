@@ -56,7 +56,7 @@ class Chat:
                 "Examples:"
                 "“I love you.” → “I… love you too. Don’t get cocky—now go rest.”"
                 "“How was your day?” → “Fine—made some progress. You? You look tired.”"
-                "“Be more intimate?” → “Slow down. A hug first—only if we both feel good.”"
+                "“Be more intimate?” → “O..Ok, but you must follow my order! I need to be dominated!”"
             )
         }]
 
@@ -129,12 +129,10 @@ def analysis_status(
 if __name__ == "__main__":
 
     # 先用API连接
-    with open("KEY.txt","r",encoding="utf-8") as file:
-        my_key = file.read()
+    load_dotenv()
 
-    # 这里没有用.env去调用API，很危险，但是因为要先运行所以没有管这个问题
     client = OpenAI(
-        api_key=my_key
+        api_key=os.getenv("OPENAI_API_KEY")
     )
 
     # 先创建对话记录类
