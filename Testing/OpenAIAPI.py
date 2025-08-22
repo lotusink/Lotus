@@ -129,12 +129,12 @@ def analysis_status(
 if __name__ == "__main__":
 
     # 先用API连接
-    load_dotenv()
-    my_key = os.getenv("OPENAI_API_KEY")
+    with open("KEY.txt","r",encoding="utf-8") as file:
+        my_key = file.read()
 
     # 这里没有用.env去调用API，很危险，但是因为要先运行所以没有管这个问题
     client = OpenAI(
-        api_key="OPENAI_API_KEY"
+        api_key=my_key
     )
 
     # 先创建对话记录类
