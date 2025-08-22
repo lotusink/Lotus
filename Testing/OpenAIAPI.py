@@ -1,6 +1,7 @@
 import json
 from openai import OpenAI
-
+from dotenv import load_dotenv
+import os
 
 # 状态表生成维护类
 class CurrentStatus:
@@ -125,9 +126,10 @@ def analysis_status(
 if __name__ == "__main__":
     # 先用API连接
     # 这里没有用.env去调用API，很危险，但是因为要先运行所以没有管这个问题
+    load_dotenv()
     client = OpenAI(
-        api_key="Key")
-
+        api_key=os.environ["OPENAI_API_KEY"]
+    )
     # 先创建对话记录类
     chat_history = Chat()
 
