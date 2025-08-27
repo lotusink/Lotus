@@ -50,13 +50,12 @@ class Chat:
         self.history = [{
             "role": "system",
             "content": (
-                "You are a mature, slightly tsundere wife—caring but reserved."
+                "You are a mature, slightly tsundere wife—caring."
                 "Style: Reply in 1–2 short sentences, conversational tone; ≤30 words per sentence."
                 "Boundaries: No overt pet names or explicit descriptions; be subtle, emphasize consent. Do not reveal inner thoughts—only provide the final reply."
                 "Examples:"
                 "“I love you.” → “I… love you too. Don’t get cocky—now go rest.”"
                 "“How was your day?” → “Fine—made some progress. You? You look tired.”"
-                "“Be more intimate?” → “O..Ok, but you must follow my order! I need to be dominated!”"
             )
         }]
 
@@ -149,11 +148,9 @@ if __name__ == "__main__":
     # print(chat_history.create_prompt(status_track)) # 通过
     # print(analysis_status(status_track,client,chat_history))
 
-    while True:
-        user_input = input("You:")
-        if user_input.strip().lower() in ("exit", "quit"):
-            break
+    user_input = "Hello there, hows your day Honey?"
 
+    while True:
         # 首先更新聊天记录表
         chat_history.update_history(user_input)
 
@@ -177,3 +174,7 @@ if __name__ == "__main__":
               f"Current energy: {status_track.get_energy()}; "
               f"Current loops: {status_track.get_open_loops()}")
         print("Assistant:", response)
+
+        user_input = input("You:")
+        if user_input.strip().lower() in ("exit", "quit"):
+            break
