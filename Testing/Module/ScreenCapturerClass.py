@@ -3,7 +3,6 @@ from openai import OpenAI
 from PIL import Image
 import base64, mss
 
-
 class ScreenCapturer:
     def __init__(self, encode_type=None):
         self.encode_type = encode_type
@@ -45,6 +44,8 @@ class ScreenCapturer:
         """
         self.capture_screen()
         self.encode_image()
+
+    def get_image(self):
         return self.image
 
 if __name__ == "__main__":
