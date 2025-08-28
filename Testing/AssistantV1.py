@@ -4,7 +4,11 @@ I call it LotusV1, but not finish yet.
 """
 
 import sys
-import Testing.Module.ImageOpenAIApi as imageapi
+from Testing.Module import (
+    ConnectOpenAI,
+    ImageOpenAIApi
+)
+
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QApplication,
@@ -16,6 +20,9 @@ from PySide6.QtWidgets import (
     QPushButton,
     QScrollArea
 )
+
+from Testing.Module.SendMessageToOpenAI import Model
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -31,8 +38,6 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Learning Assistant")
 
         ### Initial the class value
-        # The prompt class variable
-        self.prompt = None
 
         ### For line edit
         self.lineedit = QLineEdit()
@@ -82,12 +87,12 @@ class MainWindow(QMainWindow):
 
     def activate_agent(self):
         # TODO: Optimize the running logic to avoid the block of the main thread
-        # Get the content in the lineedit
-        self.prompt = self.lineedit.text()
+        # Update the prompt list through the output of the lineedit text
+        model_object.update_prompt_list(self.lineedit.text())
         # Clean the content
         self.lineedit.clear()
         # Sent the text to the agent
-        response = imageapi.main(self.prompt)
+        response = ConnectOpenAI.main(prompt=self.prompt)
         # Delete the text in the lineedit
         self.label.setText(response)
 
@@ -95,6 +100,13 @@ class MainWindow(QMainWindow):
 
 
 if __name__ == "__main__":
+    ### Connect to the OpenAI API
+    client = ConnectOpenAI.connect_openai_api()
+
+    ### Create a Model object
+    model_object = Model(client=client)
+
+    ### Start the service
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()

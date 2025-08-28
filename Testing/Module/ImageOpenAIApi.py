@@ -30,9 +30,14 @@ def encode_image(image):
         buffer.seek(0) # Move to the beginning of the BytesIO buffer
         return base64.b64encode(buffer.getvalue()).decode('utf-8')
 
-def main(prompt):
+def main(
+        prompt,
+        model_name="gpt-4o-mini"
+):
     """
     The main function for the whole pipline
+    :param prompt: The prompt for LLM (type:string-like)
+    :param model_name: The LLM model. (type:string-like, default="gpt-4o-mini")
     :return: None
     """
     client = connect_openai_api()
@@ -41,7 +46,11 @@ def main(prompt):
     b64_img = encode_image(screenshot)
 
     try:
-        response = send_receive_message(client, prompt, b64_img).output_text
+        response = send_receive_message(
+            client=client,
+            prompt=prompt,
+            model_name=model_name,
+            b64_image=b64_img).output_text
         return response
     except Exception as e:
         print(f"An error occurred: {e}")
