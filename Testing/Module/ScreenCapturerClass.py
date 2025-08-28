@@ -25,7 +25,7 @@ class ScreenCapturer:
                 'raw',
                 'BGRX'
             )
-
+    # TODO: Try original image instead of base64
     def encode_image(self):
         """
         Read in the image to the buffer, and encoding it to base64 format

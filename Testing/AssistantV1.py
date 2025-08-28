@@ -6,8 +6,13 @@ I call it LotusV1, but not finish yet.
 # TODO: Explore the possibility of using rule and model to adjust the behaviour of the LotusV1.
 # TODO: This is not a critical TODO, but is inspired. Implement memory, topic consistency and 'emotion' by using engineer
 #       method. Avoid too much spending.
+# TODO: Consider add a function to use different large language model.
+# TODO: 国内的模型用豆包试试
 
 import sys
+from itertools import batched
+
+from PyQt6.QtWidgets import QHBoxLayout
 
 from Testing.Module import (
     ConnectOpenAI,
@@ -16,7 +21,7 @@ from Testing.Module import (
     SendMessage
 )
 from PySide6.QtCore import (
-    Qt
+    Qt,QRect
 )
 from PyQt6.QtCore import (
     QThread,
@@ -31,7 +36,14 @@ from PySide6.QtWidgets import (
     QWidget,
     QPushButton,
     QScrollArea,
-    QCheckBox
+    QCheckBox,
+    QGraphicsOpacityEffect,
+    QHBoxLayout
+)
+
+from PySide6.QtGui import (
+    QRegion,
+    QPainterPath
 )
 
 class Worker(QThread):
@@ -82,13 +94,13 @@ class MainWindow(QMainWindow):
         super().__init__()
         ### Set the windows pattern
         # Make sure my windows always stay on the top
-        self.setWindowFlag(Qt.WindowStaysOnTopHint)
-        # TODO: Adding mouse dragging function also the close function in translucent background
-        # self.setWindowFlag(Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint)
+        self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint)
+        # self.setAttribute(Qt.WA_TranslucentBackground)
+        self.setWindowOpacity(1)
         # Set the background other than functional area to translucent background
         # self.setAttribute(Qt.WA_TranslucentBackground)
         # The title
-        self.setWindowTitle("Learning Assistant")
+        self.setWindowTitle("Lotus")
 
         ### Initial the class
         # For model object
@@ -100,15 +112,18 @@ class MainWindow(QMainWindow):
         # For worker thread
         self.thread = None
         self.worker = None
-
-        ### For line edit
-        self.lineedit = QLineEdit()
-        self.lineedit.setPlaceholderText("What do you want to ask about your current screen?")
+        # For mouse dragging
+        self._is_dragging = False
+        self._drag_start_pos = None
+        # For toggle visibility of label
+        self._is_show = True
 
         ### For label
-        self.label = QLabel("Wait for your command!")
+        self.label = QLabel("Good day, what`s on your mind?")
         self.label.setAlignment(Qt.AlignmentFlag.AlignVCenter)
         self.label.setWordWrap(True)
+        self.label.setStyleSheet("QLabel { background-color: transparent; color: white;}")
+
 
         ## For scrollable area
         self.scrollArea = QScrollArea()
@@ -126,10 +141,35 @@ class MainWindow(QMainWindow):
         # Add it to the scrollable area
         self.scrollArea.setWidget(container)
 
+        ### For line editor and send button layout
+        # TODO: Try using enter as the end of input
+        self.container_line_send = QWidget()
+        layout_line_send = QHBoxLayout()
+
+        ### For line edit
+        self.lineedit = QLineEdit()
+        self.lineedit.setPlaceholderText("Ask anything")
+        layout_line_send.addWidget(self.lineedit,stretch = 9)
+
         ### For button
-        self.button = QPushButton("Send")
+        ## Sending
+        self.button_send = QPushButton("Ask")
         # Once the button was clicked, send the prompt to the open API
-        self.button.clicked.connect(self.trigger_message_sending_wrapper)
+        self.button_send.clicked.connect(self.trigger_message_sending_wrapper)
+        # Add to layout
+        layout_line_send.addWidget(self.button_send, stretch = 1)
+        # Add to widget
+        self.container_line_send.setLayout(layout_line_send)
+        ## Closing
+        self.button_leave = QPushButton("Leave")
+        self.button_leave.clicked.connect(self.close)
+        # self.button_leave.setStyleSheet(
+        #     "QPushButton {background-color:transparent; color:white; border: none}"
+        #     "QPushButton:hover {background-color:grey; color:black; border-radius: 2px}"
+        # )
+        ## Hide and show layout
+        self.button_hide_show = QPushButton("Show")
+        self.button_hide_show.clicked.connect(self.toggle_visibility_label)
 
         ### For checkbox
         self.checkbox = QCheckBox("Using screenshot")
@@ -137,26 +177,76 @@ class MainWindow(QMainWindow):
         self.checkbox.setChecked(False)
         self.checkbox.checkStateChanged.connect(self.model_object.toggle_need_image)
 
+        ### Checkbox, show and Closing button
+        self.container_check_close = QWidget()
+        self.layout_check_close = QHBoxLayout()
+        self.layout_check_close.addWidget(self.checkbox,stretch = 2)
+        self.layout_check_close.addWidget(self.button_hide_show, stretch=7)
+        self.layout_check_close.addWidget(self.button_leave, stretch = 1)
+        self.container_check_close.setLayout(self.layout_check_close)
+
         ### The main layout
         mainLayout = QVBoxLayout()
+        mainLayout.addWidget(self.container_line_send)
+        # mainLayout.addWidget(self.button_leave)
+        # mainLayout.addWidget(self.button_hide_show)
+        mainLayout.addWidget(self.container_check_close)
         mainLayout.addWidget(self.scrollArea)
-        mainLayout.addWidget(self.lineedit)
-        mainLayout.addWidget(self.button)
-        mainLayout.addWidget(self.checkbox)
 
         ### Container
-        centralWidget = QWidget()
-        centralWidget.setLayout(mainLayout)
-        centralWidget.setMinimumSize(480, 320)
-
+        self.centralWidget = QWidget()
+        self.centralWidget.setStyleSheet("{ background-color: transparent; color: white;}")
+        self.centralWidget.setLayout(mainLayout)
+        self.resize(600, 400)
 
         ### Set the page
-        self.setCentralWidget(centralWidget)
+        self.setCentralWidget(self.centralWidget)
+
+        ### Set to round rectangle
+        # Create a rectangle cover the whole window
+        rect = QRect(0, 0, self.width(), self.height())
+        # Create a painter object
+        path = QPainterPath()
+        # Add a rectangle to the painter object
+        path.addRoundedRect(rect, 10, 10)  # 控制圆角半径
+        # Transform the rectangle cover to round rectangle
+        region = QRegion(
+            path.toFillPolygon().toPolygon()
+        )
+        # Mask the whole window
+        self.setMask(region)
+
+    def mousePressEvent(self, event):
+        """
+        Judging whether the mouse has been pressed
+        :param event: No idea
+        :return:
+        """
+        if event.button() == Qt.LeftButton:
+            self._is_dragging = True
+            self._drag_start_pos = event.globalPosition().toPoint() - self.frameGeometry().topLeft()
+
+    def mouseMoveEvent(self, event):
+        """
+        Judging whether the mouse is moving
+        :param event:
+        :return:
+        """
+        if self._is_dragging:
+            self.move(event.globalPosition().toPoint() - self._drag_start_pos)
+
+    def mouseReleaseEvent(self, event):
+        """
+        Judging whether the mouse has been released
+        :param event:
+        :return:
+        """
+        self._is_dragging = False
 
     def trigger_message_sending_wrapper(self):
         # Disable the button when running
-        self.button.setEnabled(False)
-        self.button.setText("Please waiting...")
+        self.button_send.setEnabled(False)
+        self.button_send.setText("Waiting...")
         self.thread = QThread(parent=None)
         # Get the prompt
         prompt = self.lineedit.text()
@@ -179,9 +269,23 @@ class MainWindow(QMainWindow):
         self.worker.finished.connect(self.worker.deleteLater)
         self.thread.finished.connect(self.thread.deleteLater)
         # Setting the button back to active
-        self.thread.finished.connect(lambda :self.button.setEnabled(True))
-        self.thread.finished.connect(lambda: self.button.setText("Send"))
+        self.thread.finished.connect(lambda :self.button_send.setEnabled(True))
+        self.thread.finished.connect(lambda: self.button_send.setText("Send"))
         self.thread.start()
+
+    def toggle_visibility_label(self):
+        if self._is_show:
+            self.scrollArea.setVisible(False)
+            self.button_hide_show.setText("Show")
+            for i in range(0,10):
+                QApplication.processEvents()
+            self.resize(self.width(),self.minimumSizeHint().height())
+        else:
+            self.scrollArea.setVisible(True)
+            self.button_hide_show.setText("Hide")
+            self.resize(600, 400)
+        self._is_show = not self._is_show
+
 
 if __name__ == "__main__":
     ### Initial class
