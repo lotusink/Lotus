@@ -8,11 +8,13 @@ I call it LotusV1, but not finish yet.
 #       method. Avoid too much spending.
 # TODO: Consider add a function to use different large language model.
 # TODO: 国内的模型用豆包试试
+# TODO: Let printer can print LATEX code
+# TODO: Calculator function
+# TODO: When waiting for API response, the waiting button is grey, which may be the hover status, need to push other
+#       button to reset. Maybe can fix it by reset the status of it.
 
 import sys
 from itertools import batched
-
-from PyQt6.QtWidgets import QHBoxLayout
 
 from Testing.Module import (
     ConnectOpenAI,
