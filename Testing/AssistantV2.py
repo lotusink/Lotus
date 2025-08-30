@@ -124,6 +124,11 @@ class MainMenu(QMainWindow):
         super().__init__()
         ### Set the windows pattern
         # Make sure my windows always stay on the top
+        self.button_history = None
+        self.button_send = None
+        self.line_send_setting_3 = None
+        self.button_leave = None
+        self.button_hide_show = None
         self.line_send_setting_2 = None
         self.block_input = None
         self.input_line = None
@@ -418,6 +423,8 @@ class MainMenu(QMainWindow):
     def trigger_message_sending_wrapper(self):
         # Disable the button when running
         self.button_send.setEnabled(False)
+        self.input_line.setPlaceholderText(QCoreApplication.translate(
+            "MainWindow", u"Please wait while I think ....", None))
         self.thread = QThread(parent=None)
         # Get the prompt
         prompt = self.input_line.text()
@@ -441,6 +448,8 @@ class MainMenu(QMainWindow):
         self.thread.finished.connect(self.thread.deleteLater)
         # Setting the button back to active
         self.thread.finished.connect(lambda :self.button_send.setEnabled(True))
+        self.thread.finished.connect(lambda: self.input_line.setPlaceholderText(
+            QCoreApplication.translate("MainWindow", u"Ask anything...", None)))
         self.thread.start()
 
     def toggle_visibility_label(self):
