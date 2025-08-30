@@ -36,7 +36,7 @@ class Model:
         return self.client.Model.list()
 
     def get_model_name(self):
-        return self.model_name if self.model_name is not None else "chatgpt-4o-latest"
+        return self.model_name if self.model_name is not None else "gpt-5"
 
     def get_model_client(self):
         return self.client

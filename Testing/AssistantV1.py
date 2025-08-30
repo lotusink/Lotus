@@ -10,11 +10,8 @@ I call it LotusV1, but not finish yet.
 # TODO: 国内的模型用豆包试试
 # TODO: Let printer can print LATEX code
 # TODO: Calculator function
-# TODO: When waiting for API response, the waiting button is grey, which may be the hover status, need to push other
-#       button to reset. Maybe can fix it by reset the status of it.
 
 import sys
-from itertools import batched
 
 from Testing.Module import (
     ConnectOpenAI,
@@ -158,6 +155,7 @@ class MainWindow(QMainWindow):
         self.button_send = QPushButton("Ask")
         # Once the button was clicked, send the prompt to the open API
         self.button_send.clicked.connect(self.trigger_message_sending_wrapper)
+        self.button_send.setStyleSheet("QPushButton:disabled{background-color: unset}") # Unset: clear the custom color
         # Add to layout
         layout_line_send.addWidget(self.button_send, stretch = 1)
         # Add to widget
@@ -240,15 +238,14 @@ class MainWindow(QMainWindow):
     def mouseReleaseEvent(self, event):
         """
         Judging whether the mouse has been released
-        :param event:
         :return:
         """
         self._is_dragging = False
 
     def trigger_message_sending_wrapper(self):
         # Disable the button when running
-        self.button_send.setEnabled(False)
         self.button_send.setText("Waiting...")
+        self.button_send.setEnabled(False)
         self.thread = QThread(parent=None)
         # Get the prompt
         prompt = self.lineedit.text()
