@@ -13,7 +13,7 @@ def send_receive_message(
     # Send and getting response
     response = model_object.get_model_client().responses.create(
         model=model_object.get_model_name(), # Choosing a model that support image
-        input=model_object.get_prompt(is_history=True)
+        input=model_object.get_prompt()
     ).output_text
 
     return response

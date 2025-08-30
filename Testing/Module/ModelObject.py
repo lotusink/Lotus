@@ -6,6 +6,7 @@ class Model:
         self.client = None
         self.prompt_list = []
         self.need_image = False
+        self.need_history = False
         self.system_prompt = {
             "role": "system",
             "content": [{
@@ -41,19 +42,16 @@ class Model:
     def get_model_client(self):
         return self.client
 
-    def get_prompt(
-            self,
-            is_history:bool=False
-    ):
+    def get_prompt(self):
         """
         Get the prompt base on whether the user need the history to be sent.
-        :param is_history: Define whether the use need the history (type:bool)
+        :param need_history: Define whether the use need the history (type:bool)
         :return: the list of the prompt (type:array-like)
         """
         return [ # If the user do not need the history, only return the current prompt
             self.system_prompt,
             self.prompt_list[-1]
-        ] if not is_history else [ # If the user not need the history, return all
+        ] if not self.need_history else [ # If the user not need the history, return all
             self.system_prompt
         ] + self.prompt_list
 
@@ -63,8 +61,11 @@ class Model:
     def set_model_client(self, client:OpenAI):
         self.client = client
 
-    def toggle_need_image(self):
-        self.need_image = not self.need_image
+    def toggle_need_image(self, checked:bool):
+        self.need_image = checked
+
+    def toggle_need_history(self, checked:bool):
+        self.need_history = checked
 
     def update_prompt_list_user(
             self,
