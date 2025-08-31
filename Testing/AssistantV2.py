@@ -346,7 +346,7 @@ class MainMenu(QMainWindow):
         self.browser_text.setFont(font4)
         self.scroll_area.setWidget(self.scrollAreaWidgetContents)
         MainWindow.setCentralWidget(self.centralwidget)
-
+        self.setWindowTitle("Lotus")
         self.retranslateUi(MainWindow)
 
         QMetaObject.connectSlotsByName(MainWindow)
