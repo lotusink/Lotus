@@ -1,3 +1,5 @@
+[English](./README.md) | [简体中文](./README.zh-CN.md)
+
 # **1 Introduction**
 
 Lotus is a screen-interactive assistant powered by large language models and OCR technology, structured in a workflow-driven manner. It is designed to enhance your daily computer usage through natural language interaction.
