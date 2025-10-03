@@ -9,4 +9,4 @@ Lotus is a screen-interactive assistant powered by large language models and OCR
 3. Launch `AssistantV2.py` to start running Lotus.
 
 ## **2.2 Interface Layout**
-![Image\layoutDesc.png](Image\layoutDesc.png)
+![Layout Description](Image/layoutDesc.png)
