@@ -424,7 +424,7 @@ class MainMenu(QMainWindow):
         # Disable the button when running
         self.button_send.setEnabled(False)
         self.input_line.setPlaceholderText(QCoreApplication.translate(
-            "MainWindow", u"Please wait while I think ....", None))
+            "MainWindow", u"Please wait while I am thinking ....", None))
         self.thread = QThread(parent=None)
         # Get the prompt
         prompt = self.input_line.text()
