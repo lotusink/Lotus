@@ -13,7 +13,7 @@ I call it LotusV1, but not finish yet.
 
 import sys
 
-from Testing.Module import (
+from scripts.Module import (
     ConnectOpenAI,
     ScreenCapturerClass,
     ModelObject,

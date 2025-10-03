@@ -1,5 +1,5 @@
 from openai import OpenAI
-from Testing.Module import ModelObject
+from scripts.Module import ModelObject
 
 def send_receive_message(
         model_object:ModelObject.Model

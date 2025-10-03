@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 from openai import OpenAI
-from Testing.Module import ModelObject
+from scripts.Module import ModelObject
 import os
 
 def connect_openai_api(
