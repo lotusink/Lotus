@@ -7,7 +7,6 @@ I call it LotusV1, but not finish yet.
 # TODO: This is not a critical TODO, but is inspired. Implement memory, topic consistency and 'emotion' by using engineer
 #       method. Avoid too much spending.
 # TODO: Consider add a function to use different large language model.
-# TODO: 国内的模型用豆包试试
 # TODO: Let printer can print LATEX code
 # TODO: Calculator function
 
