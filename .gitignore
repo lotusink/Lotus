@@ -3,3 +3,16 @@
 /Note/
 /Demo/
 /Source/
+/基于大语言模型的屏幕交互式智能体/demo/demo.mp4
+/基于大语言模型的屏幕交互式智能体/Image/layoutDesc.png
+/基于大语言模型的屏幕交互式智能体/Image/layoutDescCh.png
+/基于大语言模型的屏幕交互式智能体/scripts/Module/__init__.py
+/基于大语言模型的屏幕交互式智能体/scripts/Module/ConnectOpenAI.py
+/基于大语言模型的屏幕交互式智能体/scripts/Module/MessageClass.py
+/基于大语言模型的屏幕交互式智能体/scripts/Module/ModelObject.py
+/基于大语言模型的屏幕交互式智能体/scripts/Module/ScreenCapturerClass.py
+/基于大语言模型的屏幕交互式智能体/scripts/Module/SendMessage.py
+/基于大语言模型的屏幕交互式智能体/scripts/__init__.py
+/基于大语言模型的屏幕交互式智能体/scripts/AssistantV2.py
+/基于大语言模型的屏幕交互式智能体/README.md
+/基于大语言模型的屏幕交互式智能体/README.zh-CN.md
